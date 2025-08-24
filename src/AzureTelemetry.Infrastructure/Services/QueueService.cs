@@ -29,12 +29,13 @@ public class QueueService(AzureService azureService) : IQueueService
     {
         await _queueClient.CreateIfNotExistsAsync(cancellationToken: token);
 
-        if (await _queueClient.PeekMessageAsync(token) is null)
+        QueueMessage queueMessage = await _queueClient.ReceiveMessageAsync(cancellationToken: token);
+
+        if (queueMessage?.MessageText is null)
         {
             return MessageForWorker.Empty;
         }
         
-        QueueMessage queueMessage = await _queueClient.ReceiveMessageAsync(cancellationToken: token);
         var message = JsonSerializer.Deserialize<MessageForWorker>(queueMessage.MessageText);
         await _queueClient.DeleteMessageAsync(queueMessage.MessageId, queueMessage.PopReceipt, token);
 

@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/SolutionItems/">
+    <File Path="docker-compose.yaml" />
+  </Folder>
   <Project Path="AzureTelemetry.Api\AzureTelemetry.Api.csproj" />
   <Project Path="AzureTelemetry.Infrastructure\AzureTelemetry.Infrastructure.csproj" Type="Classic C#" />
   <Project Path="AzureTelemetry.Worker\AzureTelemetry.Worker.csproj" Type="Classic C#" />

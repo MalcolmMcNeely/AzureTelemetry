@@ -1,3 +1,4 @@
+using AzureTelemetry.Infrastructure;
 using AzureTelemetry.Infrastructure.Extensions;
 using AzureTelemetry.Infrastructure.Services;
 using Scalar.AspNetCore;
@@ -6,6 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddAzureServices();
 
 builder.Services.AddOpenApi();
+builder.Services.AddHealthChecks()
+    .AddAzureBlobStorage(x => x.GetRequiredService<AzureService>().BlobServiceClient)
+    .AddAzureTable(x => x.GetRequiredService<AzureService>().TableServiceClient);
 
 var app = builder.Build();
 
@@ -18,6 +22,10 @@ var app = builder.Build();
             .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
     });
 }
+
+app.MapHealthChecks("/healthz");
+
+app.MapGet("/", () => Results.Redirect("http://localhost:8080/scalar/v1", permanent: true));
 
 app.MapPost("/data", async (string data, bool sendToWorker, IDataRepository repo, IQueueService queueService, CancellationToken token) =>
 {

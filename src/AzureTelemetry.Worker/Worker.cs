@@ -2,7 +2,7 @@ using AzureTelemetry.Infrastructure.Services;
 
 namespace AzureTelemetry.Worker;
 
-public class Worker(IServiceScopeFactory scopeFactory, ILogger<Worker> logger) : BackgroundService
+public class Worker(IServiceScopeFactory scopeFactory) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken token)
     {

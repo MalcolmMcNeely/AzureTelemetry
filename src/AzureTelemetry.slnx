@@ -1,6 +1,9 @@
 <Solution>
   <Folder Name="/SolutionItems/">
     <File Path="docker-compose.yaml" />
+    <File Path="grafana-datasources.yml" />
+    <File Path="otel-config.yaml" />
+    <File Path="prometheus.yml" />
   </Folder>
   <Project Path="AzureTelemetry.Api\AzureTelemetry.Api.csproj" />
   <Project Path="AzureTelemetry.Infrastructure\AzureTelemetry.Infrastructure.csproj" Type="Classic C#" />

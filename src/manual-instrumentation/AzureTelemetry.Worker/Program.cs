@@ -4,6 +4,7 @@ using AzureTelemetry.Worker;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.AddAzureServices();
+builder.AddOpenTelemetry();
 
 builder.Services.AddHealthChecks()
     .AddAzureBlobStorage(x => x.GetRequiredService<AzureService>().BlobServiceClient)

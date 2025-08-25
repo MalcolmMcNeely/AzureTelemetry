@@ -20,10 +20,6 @@ services:
     ports:
       - "8080:8080"
       - "8081:8081"
-    environment:
-      OTEL_SERVICE_NAME: "AzureApp.Api"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
-      OTEL_DOTNET_AUTO_HOME: /otel-dotnet-auto
 
   worker:
     build:
@@ -33,10 +29,6 @@ services:
     depends_on:
       - azurite
       - otel-collector
-    environment:
-      OTEL_SERVICE_NAME: "AzureApp.Worker"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
-      OTEL_DOTNET_AUTO_HOME: /otel-dotnet-auto
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.88.0

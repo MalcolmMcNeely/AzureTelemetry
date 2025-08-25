@@ -1,3 +1,4 @@
+using AzureTelemetry;
 using AzureTelemetry.Infrastructure;
 using AzureTelemetry.Infrastructure.Extensions;
 using AzureTelemetry.Infrastructure.Services;
@@ -5,6 +6,7 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddAzureServices();
+builder.AddOpenTelemetry();
 
 builder.Services.AddOpenApi();
 builder.Services.AddHealthChecks()

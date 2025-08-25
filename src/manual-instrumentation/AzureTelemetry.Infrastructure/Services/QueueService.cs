@@ -4,9 +4,9 @@ using Azure.Storage.Queues.Models;
 
 namespace AzureTelemetry.Infrastructure.Services;
 
-public record MessageForWorker(string Data, string CausationId)
+public record MessageForWorker(string Data, string CorrelationId, string? TraceId, string? SpanId)
 {
-    public static MessageForWorker Empty => new(string.Empty, string.Empty);
+    public static MessageForWorker Empty => new(string.Empty, string.Empty, string.Empty, string.Empty);
 }
 
 public interface IQueueService

@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using AzureTelemetry.Api.Diagnostics;
 using AzureTelemetry.Infrastructure;
 using AzureTelemetry.Infrastructure.Extensions;
 using AzureTelemetry.Infrastructure.Services;
+using OpenTelemetry;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +17,8 @@ builder.Services.AddHealthChecks()
 
 var app = builder.Build();
 
-{ // normally guarded with if(app.Environment.IsDevelopment())
+{
+    // normally guarded with if(app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference(options =>
     {
@@ -31,13 +34,21 @@ app.MapGet("/", () => Results.Redirect("http://localhost:8080/scalar/v1", perman
 
 app.MapPost("/data", async (string data, bool sendToWorker, IDataRepository repo, IQueueService queueService, CancellationToken token) =>
 {
+    var correlationId = Guid.NewGuid().ToString();
+
+    Baggage.SetBaggage("correlationId", correlationId);
+
     var id = await repo.StoreAsync(data, token);
 
     if (sendToWorker)
     {
-        await queueService.Send(new MessageForWorker(data, Guid.NewGuid().ToString()), token);
+        var activity = Activity.Current;
+        var traceId = activity?.TraceId.ToString() ?? string.Empty;
+        var spanId = activity?.SpanId.ToString() ?? string.Empty;
+        
+        await queueService.Send(new MessageForWorker(data, correlationId, traceId, spanId), token);
     }
-    
+
     ApplicationDiagnostics.DataCreatedCounter.Add(1);
 
     return Results.Created($"/data/{id}", new { id });

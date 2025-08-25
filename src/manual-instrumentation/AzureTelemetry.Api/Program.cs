@@ -1,4 +1,4 @@
-using AzureTelemetry;
+using AzureTelemetry.Api.Diagnostics;
 using AzureTelemetry.Infrastructure;
 using AzureTelemetry.Infrastructure.Extensions;
 using AzureTelemetry.Infrastructure.Services;
@@ -37,6 +37,8 @@ app.MapPost("/data", async (string data, bool sendToWorker, IDataRepository repo
     {
         await queueService.Send(new MessageForWorker(data, Guid.NewGuid().ToString()), token);
     }
+    
+    ApplicationDiagnostics.DataCreatedCounter.Add(1);
 
     return Results.Created($"/data/{id}", new { id });
 });

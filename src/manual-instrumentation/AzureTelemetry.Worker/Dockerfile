@@ -6,7 +6,7 @@ RUN dotnet restore "AzureTelemetry.Worker/AzureTelemetry.Worker.csproj"
 COPY . .
 RUN dotnet publish "AzureTelemetry.Worker/AzureTelemetry.Worker.csproj" -c Release -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/runtime:9.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER $APP_UID
 WORKDIR /app
 COPY --from=publish /app/publish .

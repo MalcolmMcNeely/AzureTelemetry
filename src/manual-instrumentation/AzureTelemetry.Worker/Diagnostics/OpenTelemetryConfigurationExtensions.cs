@@ -1,8 +1,9 @@
-﻿using AzureTelemetry.Worker;
+﻿using Microsoft.AspNetCore.Builder;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-namespace AzureTelemetry;
+namespace AzureTelemetry.Worker.Diagnostics;
 
 public static class OpenTelemetryConfigurationExtensions
 {
@@ -12,7 +13,7 @@ public static class OpenTelemetryConfigurationExtensions
             .ConfigureResource(resource =>
             {
                 resource
-                    .AddService("AzureTelemetry.Api")
+                    .AddService("AzureTelemetry.Worker")
                     .AddAttributes(
                     [
                         new KeyValuePair<string, object>("service.version", "1.0.0")
@@ -21,12 +22,17 @@ public static class OpenTelemetryConfigurationExtensions
             .WithTracing(tracing =>
             {
                 tracing
-                    .AddAspNetCoreInstrumentation()
-                    .AddHttpClientInstrumentation()
-                    .AddSource(Defaults.Telemetry.ActivitySourceName)
+                    .AddSource(Defaults.Telemetry.ServiceName)
                     .AddSource("Azure.*")
-                    .AddOtlpExporter(options => options.Endpoint = new Uri("http://jaeger:4317"))
+                    .AddOtlpExporter(options => options.Endpoint = new Uri("http://otel-collector:4317"))
                     .AddConsoleExporter();
+            })
+            .WithMetrics(metrics =>
+            {
+                metrics
+                    .AddRuntimeInstrumentation()
+                    .AddMeter(ApplicationDiagnostics.Meter.Name)
+                    .AddOtlpExporter(options => options.Endpoint = new Uri("http://otel-collector:4317"));
             });
 
         return builder;

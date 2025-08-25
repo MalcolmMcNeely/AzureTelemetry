@@ -4,6 +4,6 @@ public static class Defaults
 {
     public static class Telemetry
     {
-        public const string ActivitySourceName = "AzureTelemetry.Worker";
+        public const string ServiceName = "AzureTelemetry.Worker";
     }
 }
